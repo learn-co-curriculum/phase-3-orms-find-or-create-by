@@ -68,18 +68,23 @@ attr_reader :id
   end
 
   def save
-    sql = <<-SQL
-      INSERT INTO songs (name, album) 
-      VALUES (?, ?)
-    SQL
+    if self.id 
+      self.update
+    else
+      sql = <<-SQL
+        INSERT INTO songs (name, album) 
+        VALUES (?, ?)
+      SQL
 
-    DB[:conn].execute(sql, self.name, self.album)
-    
+      DB[:conn].execute(sql, self.name, self.album)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
+    end
   end
 
   def self.create(name:, album:)
     student = Student.new(name, album)
     student.save
+    student
   end
   
   def self.find_by_id(id)
@@ -99,7 +104,7 @@ Let's build our `#find_or_create_by` method:
 
 ```ruby
   def self.find_or_create_by(name:, album:)
-    song = DB[:conn].execute("SELECT * FROM songs WHERE name = #{name}, album = #{album}")
+    song = DB[:conn].execute("SELECT * FROM songs WHERE name = '#{name}' AND album = '#{album}'")
     if !song.empty?
       song_data = song[0]
       song = Song.new(song_data[0], song_data[1], song_data[2])
@@ -115,7 +120,7 @@ Let's break this down:
 First, we query the database: does a record exist that has this name and album? 
 
 ```ruby
-song = DB[:conn].execute("SELECT * FROM songs WHERE name = #{name}, album = #{album}")
+song = DB[:conn].execute("SELECT * FROM songs WHERE name = '#{name}' AND album = '#{album}'")
 ```
 
 If such a record exists, the `song` variable will now point to an array that would look something like this:
