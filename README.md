@@ -49,7 +49,7 @@ WHERE name = "Hello", album = "25";
 
 If this statement returns a record, we don't need to create a new record, only update the existing one. Otherwise, we need to insert a new record into our database table. 
 
-Let's build a method that will allow us to either *find and update* and existing record or *create and save* and new one. 
+Let's build a method that will allow us to either *find an existing record* or *create and save* a new one. 
 
 ## The `#find_or_create_by` Method
 
@@ -82,9 +82,9 @@ attr_reader :id
     student.save
   end
   
-  def self.find_by_name(name)
-    sql = "SELECT * FROM songs WHERE name = ?"
-    result = DB[:conn].execute(sql, name)[0]
+  def self.find_by_id(id)
+    sql = "SELECT * FROM songs WHERE id = ?"
+    result = DB[:conn].execute(sql, id)[0]
     Song.new(result[0], result[1], result[2])
   end
   
@@ -99,20 +99,54 @@ Let's build our `#find_or_create_by` method:
 
 ```ruby
   def self.find_or_create_by(name:, album:)
-    if !DB[:conn].execute("SELECT * FROM students WHERE name = #{name}, album = #{album}").empty?
-      song = Song.find_by_name(name)
-      song.update
+    song = DB[:conn].execute("SELECT * FROM songs WHERE name = #{name}, album = #{album}")
+    if !song.empty?
+      song_data = song[0]
+      song = Song.new(song_data[0], song_data[1], song_data[2])
     else
-      self.create(name: name, album: album)
+      song = self.create(name: name, album: album)
     end
+    song
   end 
 ```
 
 Let's break this down: 
 
-* First, we query the database: does a record exist that has this name and album? If not, the query will return an empty array. Therefore this statement: `!DB[:conn].execute("SELECT * FROM students WHERE name = #{name}").empty?` will return true if a record is returned and false if no such record exists. 
-* If a record is returned, retrieve it from the database with the `#find_by_name` method and then update it with the `#update` method. 
-* If no such record exists, create a new `Song` instance and save it to the database with the `#create` method. 
+First, we query the database: does a record exist that has this name and album? 
+
+```ruby
+song = DB[:conn].execute("SELECT * FROM songs WHERE name = #{name}, album = #{album}")
+```
+
+If such a record exists, the `song` variable will now point to an array that would look something like this:
+
+*song name and album name provided as a hypothetical example*
+
+```ruby
+[[1, "Hello", "25"]]
+```
+
+If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will *not* create a new song instance and record, we will instead grab and return the exiting song record. That is what is accomplished with these lines:
+
+```ruby
+song_data = song[0]
+song = Song.new(song_data[0], song_data[1], song_data[2])
+```
+
+We grab the `song_data` from the `song` array of arrays, setting `song_data` equal to:
+
+```ruby
+[1, "Hello", "25"]
+```
+
+Then, we use this array to create a new `Song` instance with the given id, name and album. 
+
+However, if no record exists that matches the name and album passed in to this method as arguments, then `!song.empty?` will return false, and we will instead create and save a new `Song` instance with the `#create` method. 
+
+At the end of our `#find_or_create_by` method, we will return the `song` object that we either found or created. 
+
+
+### Our Code in Action 
 
 Now, we can use our `Song` class without worrying about creating duplicate records:
 
