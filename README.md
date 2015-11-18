@@ -2,7 +2,7 @@
 
 ## Objectives
 
-1. Learn how to avoid creating duplicate records in a database that is mapped to a Ruby program. 
+1. Avoid creating duplicate records in a database that is mapped to a Ruby program 
 2. Build a `#find_or_create_by` method
 
 ## The Dreaded Duplication
