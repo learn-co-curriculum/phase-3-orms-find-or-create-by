@@ -131,7 +131,7 @@ If such a record exists, the `song` variable will now point to an array that wou
 [[1, "Hello", "25"]]
 ```
 
-If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will *not* create a new song instance and record, we will instead grab and return the exiting song record. That is what is accomplished with these lines:
+If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will *not* create a new song instance and record, we will instead grab and return the existing song record. That is what is accomplished with these lines:
 
 ```ruby
 song_data = song[0]
