@@ -82,9 +82,9 @@ attr_reader :id
   end
 
   def self.create(name:, album:)
-    student = Student.new(name, album)
-    student.save
-    student
+    song = Song.new(name, album)
+    song.save
+    song
   end
   
   def self.find_by_id(id)
@@ -166,3 +166,5 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = Hello, album = 25")
 Although we called `#find_or_create_by` twice *with the same data* (gasp!), we only created *one record with that data*. 
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
+
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
