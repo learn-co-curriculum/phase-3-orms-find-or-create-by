@@ -77,7 +77,7 @@ attr_reader :id
       SQL
 
       DB[:conn].execute(sql, self.name, self.album)
-      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM songs")[0][0]
     end
   end
 
@@ -168,3 +168,5 @@ Although we called `#find_or_create_by` twice *with the same data* (gasp!), we o
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
