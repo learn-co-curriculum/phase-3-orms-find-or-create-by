@@ -148,8 +148,7 @@ Then, we use this array to create a new `Song` instance with the given id, name 
 
 However, if no record exists that matches the name and album passed in to this method as arguments, then `!song.empty?` will return false, and we will instead create and save a new `Song` instance with the `#create` method. 
 
-At the end of our `#find_or_create_by` method, we will return the `song` object that we either found or created. 
-
+At the end of our #find_or_create_by method, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. It, therefore, instantiates a new instance of the Song class, while preventing a duplication of the database entry.
 
 ### Our Code in Action 
 
