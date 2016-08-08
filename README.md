@@ -131,7 +131,7 @@ If such a record exists, the `song` variable will now point to an array that wou
 [[1, "Hello", "25"]]
 ```
 
-If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will *not* create a new song instance and record, we will instead grab and return the existing song record. That is what is accomplished with these lines:
+If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will use the returned values to make a new "Hello" object that Ruby can play around with, but we will *not* save it to the database. That re-instantiation of an existing Song object is accomplished with these lines:
 
 ```ruby
 song_data = song[0]
@@ -146,11 +146,11 @@ We grab the `song_data` from the `song` array of arrays, setting `song_data` equ
 
 Then, we use this array to create a new `Song` instance with the given id, name and album. 
 
-However, if no record exists that matches the name and album passed in to this method as arguments, then `!song.empty?` will return false, and we will instead create and save a new `Song` instance with the `#create` method. 
+However, if no record exists that matches the name and album passed in as arguments, then `!song.empty?` will return `false`, and we will instead create and save a new `Song` instance with the `#create` method.
 
-At the end of our #find_or_create_by method, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. It, therefore, instantiates a new instance of the Song class, while preventing a duplication of the database entry.
+At the end of our `#find_or_create_by method`, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. Therefore, it instantiates a new instance of the `Song` class while preventing a duplicate database entry.
 
-### Our Code in Action 
+### Our Code in Action
 
 Now, we can use our `Song` class without worrying about creating duplicate records:
 
@@ -165,7 +165,3 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = Hello, album = 25")
 Although we called `#find_or_create_by` twice *with the same data* (gasp!), we only created *one record with that data*. 
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
-
-<p class='util--hide'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
