@@ -164,4 +164,12 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = Hello, album = 25")
 
 Although we called `#find_or_create_by` twice *with the same data* (gasp!), we only created *one record with that data*. 
 
+## Bonus Section- Video Reviews
+
+* [Video Review- ORMS and SQL Joins](https://github.com/learn-co-curriculum/orm-video-review-orms-and-sql-joins)
+
+* [Video Review- Building a Metaprogrammed Abstract ORM](https://github.com/learn-co-curriculum/orm-video-review-building-a-metaprogrammed-abstract-orm) 
+
+* [Video Review- Codealong: Building a Room Scraper and ORM](https://github.com/learn-co-curriculum/orm-video-review-codealong-building-a-room-scraper-and-orm) 
+
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
