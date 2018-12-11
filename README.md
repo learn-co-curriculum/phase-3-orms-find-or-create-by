@@ -9,9 +9,9 @@
 
 What happens when two Ruby objects get created using the same attributes? If we are trying to persist representations of such objects to a database, would we end up with essentially identical rows in our table? That would make for a very confusing database and our program would quickly become useless as a way to store and manage information. 
 
-For example, lets say we have a `Song` class that produces individual song objects, each of which have a `name` and `album` attribute.
+For example, lets say we have a `Song` class that produces individual song objects, each of which has a `name` and `album` attribute.
 
-Nothing stops us from creating two objects, each of which have the exact same name and album. 
+Nothing stops us from creating two objects, each of which has the exact same name and album. 
 
 ```ruby
 hello = Song.new("Hello", "25")
