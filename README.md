@@ -30,7 +30,7 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = "Hello")
 # => [[1, "Hello", "25"], [2, "Hello", "25"]]
 ```
 
-We have two records that contain the same information! How can we avoid this? When we try to save a new `Song` instance, we should first check to see whether the object we are trying to save already has an equivalent record in the database, if it does, we should simply update it, otherwise, we can go ahead and save it. 
+We have two records that contain the same information! How can we avoid this? When we try to save a new `Song` instance, we should first check to see whether the object we are trying to save already has an equivalent record in the database. If it does, we should simply update it, otherwise, we can go ahead and save it. 
 
 ## Saving vs. Updating
 
