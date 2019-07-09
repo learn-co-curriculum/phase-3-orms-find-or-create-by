@@ -2,16 +2,23 @@
 
 ## Objectives
 
-1. Avoid creating duplicate records in a database that is mapped to a Ruby program 
-2. Build a `#find_or_create_by` method
+- Avoid creating duplicate records in a database that is mapped to a Ruby
+  program
+- Build a `#find_or_create_by` method
 
 ## The Dreaded Duplication
 
-What happens when two Ruby objects get created using the same attributes? If we are trying to persist representations of such objects to a database, would we end up with essentially identical rows in our table? That would make for a very confusing database and our program would quickly become useless as a way to store and manage information. 
+What happens when two Ruby objects get created using the same attributes? If we
+are trying to persist representations of such objects to a database, would we
+end up with essentially identical rows in our table? That would make for a very
+confusing database and our program would quickly become useless as a way to
+store and manage information.
 
-For example, lets say we have a `Song` class that produces individual song objects, each of which has a `name` and `album` attribute.
+For example, lets say we have a `Song` class that produces individual song
+objects, each of which has a `name` and `album` attribute.
 
-Nothing stops us from creating two objects, each of which has the exact same name and album. 
+Nothing stops us from creating two objects, each of which has the exact same
+name and album.
 
 ```ruby
 hello = Song.new("Hello", "25")
@@ -20,7 +27,8 @@ hello_again = Song.new("Hello", "25")
 
 What happens when we save these objects to our database?
 
-*For this example, we'll assume our connection to the database is stored in `DB[:conn]`*
+*For this example*, we'll assume our connection to the database is stored in
+`DB[:conn]`.
 
 ```ruby
 hello.save
@@ -30,7 +38,11 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = "Hello")
 # => [[1, "Hello", "25"], [2, "Hello", "25"]]
 ```
 
-We have two records that contain the same information! How can we avoid this? When we try to save a new `Song` instance, we should first check to see whether the object we are trying to save already has an equivalent record in the database. If it does, we should simply update it, otherwise, we can go ahead and save it. 
+We have two records that contain the same information! How can we avoid this?
+When we try to save a new `Song` instance, we should first check to see whether
+the object we are trying to save already has an equivalent record in the
+database. If it does, we should simply update it. Otherwise, we can go ahead and
+save it.
 
 ## Saving vs. Updating
 
@@ -40,20 +52,25 @@ Let's say we have a song, `hello`:
 hello = Song.new("Hello", "25")
 ```
 
-Before we call `#save` on our `hello` object, we need to check and see if a record containing this name and album already exists in the database. The SQL statement to accomplish that would look something like this:
+Before we call `#save` on our `hello` object, we need to check and see if a
+record containing this name and album already exists in the database. The SQL
+statement to accomplish that would look something like this:
 
 ```ruby
 SELECT * FROM songs
 WHERE name = "Hello", album = "25";
 ```
 
-If this statement returns a record, we don't need to create a new record, only update the existing one. Otherwise, we need to insert a new record into our database table. 
+If this statement returns a record, we don't need to create a new record, only
+update the existing one. Otherwise, we need to insert a new record into our
+database table.
 
-Let's build a method that will allow us to either *find an existing record* or *create and save* a new one. 
+Let's build a method that will allow us to either *find an existing record* or
+*create and save* a new one.
 
 ## The `#find_or_create_by` Method
 
-Take a look at our `Song` class. 
+Take a look at our `Song` class.
 
 ```ruby
 class Song
@@ -68,11 +85,11 @@ attr_reader :id
   end
 
   def save
-    if self.id 
+    if self.id
       self.update
     else
       sql = <<-SQL
-        INSERT INTO songs (name, album) 
+        INSERT INTO songs (name, album)
         VALUES (?, ?)
       SQL
 
@@ -98,7 +115,7 @@ attr_reader :id
     DB[:conn].execute(sql, self.name, self.album, self.id)
   end
 end
-``` 
+```
 
 Let's build our `#find_or_create_by` method:
 
@@ -112,18 +129,19 @@ Let's build our `#find_or_create_by` method:
       song = self.create(name: name, album: album)
     end
     song
-  end 
+  end
 ```
 
-Let's break this down: 
+Let's break this down:
 
-First, we query the database: does a record exist that has this name and album? 
+First, we query the database: does a record exist that has this name and album?
 
 ```ruby
 song = DB[:conn].execute("SELECT * FROM songs WHERE name = ? AND album = ?", name, album)
 ```
 
-If such a record exists, the `song` variable will now point to an array that would look something like this:
+If such a record exists, the `song` variable will now point to an array that
+would look something like this:
 
 *song name and album name provided as a hypothetical example*
 
@@ -131,24 +149,36 @@ If such a record exists, the `song` variable will now point to an array that wou
 [[1, "Hello", "25"]]
 ```
 
-If this is the case, then the statement: `!song.empty?` will return `true`. Therefore, we will use the returned values to make a new "Hello" object that Ruby can play around with, but we will *not* save it to the database. That re-instantiation of an existing Song object is accomplished with these lines:
+If this is the case, then the statement: `!song.empty?` will return `true`.
+Therefore, we will use the returned values to make a new "Hello" object that
+Ruby can play around with, but we will *not* save it to the database. That
+re-instantiation of an existing Song object is accomplished with these lines:
 
 ```ruby
 song_data = song[0]
 song = Song.new(song_data[0], song_data[1], song_data[2])
 ```
 
-We grab the `song_data` from the `song` array of arrays, setting `song_data` equal to:
+We grab the `song_data` from the `song` array of arrays, setting `song_data`
+equal to:
 
 ```ruby
 [1, "Hello", "25"]
 ```
 
-Then, we use this array to create a new `Song` instance with the given id, name and album. 
+Then, we use this array to create a new `Song` instance with the given id, name
+and album.
 
-However, if no record exists that matches the name and album passed in as arguments, then `!song.empty?` will return `false`, and we will instead create and save a new `Song` instance with the `#create` method.
+However, if no record exists that matches the name and album passed in as
+arguments, then `!song.empty?` will return `false`, and we will instead create
+and save a new `Song` instance with the `#create` method.
 
-At the end of our `#find_or_create_by` method, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. Therefore, it instantiates a new instance of the `Song` class while preventing a duplicate database entry.
+At the end of our `#find_or_create_by` method, we will return the song object
+whose database entry we either found or created. This method assumes that there
+isn't already a song object matching these attributes, but that there may
+already exist a database entry with the same name and album. Therefore, it
+instantiates a new instance of the `Song` class while preventing a duplicate
+database entry.
 
 ### Our Code in Action
 
@@ -162,16 +192,15 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = Hello, album = 25")
 # => [[1, "Hello", "25"]]
 ```
 
-Although we called `#find_or_create_by` twice *with the same data* (gasp!), we only created *one record with that data*. 
+Although we called `#find_or_create_by` twice *with the same data* (gasp!), we
+only created *one record with that data*.
 
 ## Bonus Section- Video Reviews
 
-* [Video Review- ORMS and SQL Joins](https://www.youtube.com/watch?v=mZROu5oSWfI)
+- [Video Review- ORMs and SQL Joins](https://www.youtube.com/watch?v=mZROu5oSWfI)
 
-* [Video Review- Building a Metaprogrammed Abstract ORM](https://www.youtube.com/watch?v=hts7TjpPw-8) 
+- [Video Review- Building a Metaprogrammed Abstract ORM](https://www.youtube.com/watch?v=hts7TjpPw-8)
 
-* [Video Review- Codealong: Building a Room Scraper and ORM](https://www.youtube.com/watch?v=1eIgKGukBlg) 
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
+- [Video Review- Code-along: Building a Room Scraper and ORM](https://www.youtube.com/watch?v=1eIgKGukBlg)
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
