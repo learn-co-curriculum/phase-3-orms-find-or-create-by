@@ -148,7 +148,7 @@ Then, we use this array to create a new `Song` instance with the given id, name 
 
 However, if no record exists that matches the name and album passed in as arguments, then `!song.empty?` will return `false`, and we will instead create and save a new `Song` instance with the `#create` method.
 
-At the end of our `#find_or_create_by method`, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. Therefore, it instantiates a new instance of the `Song` class while preventing a duplicate database entry.
+At the end of our `#find_or_create_by` method, we will return the song object whose database entry we either found or created. This method assumes that there isn't already a song object matching these attributes, but that there may already exist a database entry with the same name and album. Therefore, it instantiates a new instance of the `Song` class while preventing a duplicate database entry.
 
 ### Our Code in Action
 
@@ -173,3 +173,5 @@ Although we called `#find_or_create_by` twice *with the same data* (gasp!), we o
 * [Video Review- Codealong: Building a Room Scraper and ORM](https://www.youtube.com/watch?v=1eIgKGukBlg) 
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/orm-find-or-create-by' title='ORM: Preventing Record Duplication'>ORM: Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
