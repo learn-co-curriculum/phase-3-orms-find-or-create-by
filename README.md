@@ -1,6 +1,6 @@
 # ORM: Preventing Record Duplication
 
-## Objectives
+## Learning Goals
 
 - Avoid creating duplicate records in a database that is mapped to a Ruby
   program
