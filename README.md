@@ -203,4 +203,4 @@ only created *one record with that data*.
 
 - [Video Review- Code-along: Building a Room Scraper and ORM](https://www.youtube.com/watch?v=1eIgKGukBlg)
 
-<p class='util--hide'>View <a href='https://learn.co/lessons/orm-find-or-create-by'>Preventing Record Duplication</a> on Learn.co and start learning to code for free.</p>
+
