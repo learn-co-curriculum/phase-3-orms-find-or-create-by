@@ -194,13 +194,3 @@ DB[:conn].execute("SELECT * FROM songs WHERE name = Hello, album = 25")
 
 Although we called `#find_or_create_by` twice *with the same data* (gasp!), we
 only created *one record with that data*.
-
-## Bonus Section- Video Reviews
-
-- [Video Review- ORMs and SQL Joins](https://www.youtube.com/watch?v=mZROu5oSWfI)
-
-- [Video Review- Building a Metaprogrammed Abstract ORM](https://www.youtube.com/watch?v=hts7TjpPw-8)
-
-- [Video Review- Code-along: Building a Room Scraper and ORM](https://www.youtube.com/watch?v=1eIgKGukBlg)
-
-
